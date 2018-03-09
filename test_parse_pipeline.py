@@ -42,8 +42,22 @@ class TestParsePipeline(unittest.TestCase):
         #TODO: add corresponding test data
         pair = self.pl1.pair_dicom_contour_file()
         for i in range(10):
-            dicom_file, icontour_file = next(pair)
-            # TODO: add more testing criteria, if filenames are similar
+            dicom_image, boolean_mask = next(pair)
+            self.assertEqual(boolean_mask.shape, dicom_image.shape)
+
+    def test_convert_tuple_to_img_boolean_mask_invalid_dicom(self):
+        (dicom_img, boolean_mask) = self.pl1.convert_tuple_to_img_boolean_mask(self.invalid_dicom_file, self.valid_icontour_file)
+        self.assertIsNone(dicom_img)
+        self.assertIsNone(boolean_mask)
+
+    def test_convert_tuple_to_img_boolean_mask_invalid_icontour(self):
+        (dicom_img, boolean_mask) = self.pl1.convert_tuple_to_img_boolean_mask(self.valid_dicom_file, self.invalid_icontour_file)
+        self.assertIsNone(dicom_img)
+        self.assertIsNone(boolean_mask)
+
+    def test_convert_tuple_to_img_boolean_mask(self):
+        (dicom_img, boolean_mask) = self.pl1.convert_tuple_to_img_boolean_mask(self.valid_dicom_file, self.valid_icontour_file)
+        self.assertEqual(dicom_img.shape, boolean_mask.shape)
 
 if __name__ == '__main__':
     unittest.main()

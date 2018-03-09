@@ -29,7 +29,8 @@ class TestParsing(unittest.TestCase):
         self.assertTrue(boolean_mask.shape == dicom_img.shape)
 
     def test_poly_to_mask_invalid(self):
-        self.fail()
+        with self.assertRaises(TypeError):
+            invalid_mask = parsing.poly_to_mask([], 0, 0)
         
 if __name__ == '__main__':
     unittest.main()

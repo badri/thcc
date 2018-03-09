@@ -10,8 +10,8 @@ class ParsePipeline(object):
     ParsePipeline parses the dataset directory and pairs up the i-contour file with its 
     respective .dcm file if it exists.
     Example usage:
-    pipeline = ParsePipeline('./final_data')
-    pipeline.pair_dicom_contour_file() # is a generator for getting a (dicom,i-contour) file tuple.
+        pipeline = ParsePipeline('./final_data')
+        pipeline.pair_dicom_contour_file() # is a generator for getting a (dicom,i-contour) file tuple.
     """
     
     def __init__(self, data_dir):
@@ -46,7 +46,7 @@ class ParsePipeline(object):
             for icontour_file in icontour_paths:
                 dicom_file = self.find_dicom_file_for_icontour_file(dicom_dir, icontour_file)
                 if dicom_file:
-                    yield (dicom_file, icontour_file)
+                    yield self.convert_tuple_to_img_boolean_mask(dicom_file, icontour_file)
 
     def find_dicom_file_for_icontour_file(self, dicom_dir, icontour_file):
         """
@@ -67,6 +67,28 @@ class ParsePipeline(object):
             return dicom_file
         #TODO: Write a debug log saying no dicomfile found for icontour_file
         return None
+
+    def convert_tuple_to_img_boolean_mask(self, dicom_file, icontour_file):
+        """
+        Convert a dicom file and an icontour file into a numpy image array and a boolean mask
+        respectively.
+        :param dicom_file: path of dicom file
+        :param icontour_file: path of icontourfile
+        :return: a tuple containing a numpy image array and a boolean mask array, or 2 Nones if
+        either of the files are invalid.
+        """
+        dcm_dict = parsing.parse_dicom_file(dicom_file)
+        if dcm_dict is None:
+            logging.warning('Dicom file invalid: ' + dicom_file)
+            return (None, None)
+        dicom_img = dcm_dict['pixel_data']
+        coords_lst = parsing.parse_contour_file(icontour_file)
+        if len(coords_lst) == 0:
+            logging.warning('Inner contour file empty: ' + icontour_file)
+            return (None, None)
+        icontour_boolean_mask = parsing.poly_to_mask(coords_lst, dicom_img.shape[0], dicom_img.shape[1])
+        return (dicom_img, icontour_boolean_mask)
+    
 
 pl1 = ParsePipeline('./final_data')
 
