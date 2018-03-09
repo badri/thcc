@@ -17,7 +17,7 @@ class ParsePipeline(object):
             reader = csv.DictReader(csvfile)
             for row in reader:
                 #TODO: throw exception if patient_id or original_id directory does not exist?
-                patient_data.append((row['patient_id'], row['original_id']))
+                patient_data.append((str.strip(row['patient_id']), str.strip(row['original_id'])))
         return patient_data
 
     def pair_dicom_contour_file(self):

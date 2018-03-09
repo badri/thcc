@@ -40,7 +40,12 @@ class TestParsePipeline(unittest.TestCase):
             self.assertEqual(len(mask), self.fpl1.batch_size)
 
     def test_new_ipoch(self):
-        self.fail()
+        ppl = ParsePipeline('./test_data')
+        result = list(ppl.pair_dicom_contour_file())
+        fpl1 = FeedPipeline(result, 1)
+        for img,mask in iter(fpl1.next_batch, None):
+            print img
+            print mask
 
     def test_feeder_iter_ends(self):
         self.fail()
