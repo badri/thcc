@@ -1,4 +1,3 @@
 final_data
 *~
-*.dcm
-*.txt
+*.pyc

@@ -71,13 +71,6 @@ def poly_to_mask(polygon, width, height):
     mask = np.array(img).astype(bool)
     return mask
 
-dcf = parse_dicom_file('48.dcm')
-print dcf
-
-cf = parse_contour_file('IM-0001-0048-icontour-manual.txt')
-print cf
-
-
 # read links.csv
 
 def pair_dicom_contour_file(dicom_dir, contour_dir):
