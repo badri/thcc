@@ -30,7 +30,7 @@ class ParsePipeline(object):
             for icontour_file in icontour_paths:
                 dicom_file = self.find_dicom_file_for_icontour_file(dicom_dir, icontour_file)
                 if dicom_file:
-                    yield self.convert_tuple_to_img_boolean_mask(dicom_file, icontour_file)
+                    yield (dicom_file, icontour_file)
 
     def find_dicom_file_for_icontour_file(self, dicom_dir, icontour_file):
         parts = os.path.basename(icontour_file).split('-')
@@ -44,15 +44,19 @@ class ParsePipeline(object):
         #TODO: probably write a debug log saying no dicomfile found for icontour_file
         return None
 
-    def convert_tuple_to_img_boolean_mask(self, dicom_file, icontour_file):
-        dcm_dict = parsing.parse_dicom_file(dicom_file)
-        if dcm_dict is None:
-            logging.warning('Dicom file invalid: ' + dicom_file)
-            return (None, None)
-        dicom_img = dcm_dict['pixel_data']
-        coords_lst = parsing.parse_contour_file(icontour_file)
-        if len(coords_lst) == 0:
-            logging.warning('Inner contour file empty: ' + icontour_file)
-            return (None, None)
-        icontour_boolean_mask = parsing.poly_to_mask(coords_lst, dicom_img.shape[0], dicom_img.shape[1])
-        return (dicom_img, icontour_boolean_mask)
+pl1 = ParsePipeline('./final_data')
+
+results = []
+
+def collect_results(lst):
+    print lst
+    results.extend(lst)
+
+def pipeline_wrapper():
+    return list(pl1.pair_dicom_contour_file())
+
+if __name__ == '__main__':
+    gen = pl1.pair_dicom_contour_file()
+    print list(gen)
+    for i in gen:
+        results.append(i)
