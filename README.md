@@ -49,6 +49,8 @@ None.
 
 It already does an `iglob`, so expected to work over large no. of files. There is scope for parallelization in the file finding function. The task is simple where we have to find a matching DICOM file for a given contour file. I'd use the `multiprocessing` stdlib to do this.
 
+Another improvement is to read `link.csv` in chunks and process each chunk parallelly.
+
 > If this pipeline were parallelized, what kinds of error checking and/or safeguards, if any, would you add into the pipeline?
 
 The task to be parallelized does not have a lot of data dependencies, so it can be expected run without any error checking/safeguards.
