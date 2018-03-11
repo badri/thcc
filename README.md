@@ -92,6 +92,8 @@ Some references:
 
 Another approach would be to store the results in a persistent store and load from that, like Postgres.
 
+The `new_epoch()` could do the shuffling part parallelly after storing it in a database, as shuffling of a large dataset can't be done from memory.
+
 Other stuff:
 - more test coverage
 - run on a bigger dataset and try out the above approaches and measure the outcome.
